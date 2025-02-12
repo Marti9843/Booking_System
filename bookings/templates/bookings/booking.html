@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Запис на послугу</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Запис на послугу</h2>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <h3>Ваші дані</h3>
+        {{ client_form.as_p }}
+        
+        <h3>Оберіть послугу</h3>
+        {{ booking_form.service }}
+        
+        <h3>Тип заняття</h3>
+        {{ booking_form.session_type }}
+        
+        <h3>Дата та час</h3>
+        {{ booking_form.date }}<br>
+        {{ booking_form.time }}<br>
+
+        <button type="submit">Записатися</button>
+    </form>
+
+    <script>
+        $("#id_service").change(function() {
+            var serviceId = $(this).val();
+            if (serviceId) {
+                $.ajax({
+                    url: "{% url 'get_session_types' %}",
+                    data: {'service_id': serviceId},
+                    success: function(data) {
+                        $("#id_session_type").empty();
+                        $.each(data, function(index, sessionType) {
+                            $("#id_session_type").append($('<option>', {
+                                value: sessionType.id,
+                                text: sessionType.name
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
