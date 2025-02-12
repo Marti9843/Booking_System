@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Запис на послугу</title>
+</head>
+<body>
+    <h2>Запис на послугу</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ client_form.as_p }}
+        {{ booking_form.as_p }}
+        <button type="submit">Записатися</button>
+    </form>
+</body>
+</html>
