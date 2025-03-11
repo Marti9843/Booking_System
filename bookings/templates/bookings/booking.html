@@ -1,27 +1,35 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>Запис на послугу</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
+{% extends 'bookings/base.html' %}
+
+{% block title %}Запис на послугу{% endblock %}
+
+{% block content %}
     <h2>Запис на послугу</h2>
     <form method="POST">
         {% csrf_token %}
-        
+
         <h3>Ваші дані</h3>
         {{ client_form.as_p }}
-        
+
         <h3>Оберіть послугу</h3>
         {{ booking_form.service }}
-        
+
         <h3>Тип заняття</h3>
         {{ booking_form.session_type }}
-        
+
         <h3>Дата та час</h3>
         {{ booking_form.date }}<br>
         {{ booking_form.time }}<br>
+
+        <!-- Виведення помилок валідації -->
+        {% if booking_form.errors %}
+            <div class="errors">
+                {% for field, errors in booking_form.errors.items %}
+                    {% for error in errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <button type="submit">Записатися</button>
     </form>
@@ -46,5 +54,4 @@
             }
         });
     </script>
-</body>
-</html>
+{% endblock %}
