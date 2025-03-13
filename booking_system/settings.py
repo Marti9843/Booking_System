@@ -100,7 +100,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'bookings.Users'
+AUTH_USER_MODEL = 'bookings.User'
 # Налаштування для входу/виходу
 LOGIN_URL = 'login'  # URL для перенаправлення, якщо користувач не авторизований
 LOGIN_REDIRECT_URL = 'about'  # URL для перенаправлення після успішного входу
