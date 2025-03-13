@@ -95,7 +95,7 @@ class SessionType(models.Model):
 
 
 class Booking(models.Model):
-    client = models.ForeignKey(User, related_name='users', on_delete=models.CASCADE)
+    client = models.ForeignKey(User, related_name='bookings', on_delete=models.CASCADE)
     service = models.ForeignKey(Service, related_name='bookings', on_delete=models.CASCADE)
     session_type = models.ForeignKey(SessionType, related_name='bookings', on_delete=models.CASCADE)
     date = models.DateField()
