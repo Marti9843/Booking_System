@@ -5,7 +5,8 @@ from django.contrib.auth import logout as auth_logout, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .models import Service, SessionType
-from .forms import BookingForm
+from .forms import BookingForm, UserForm
+
 
 # Головна сторінка запису на послугу
 @login_required
@@ -26,6 +27,7 @@ def booking_view(request):
         'services': Service.objects.all(),
     })
 
+
 # Отримання типів занять для обраної послуги (AJAX)
 def get_session_types(request):
     service_id = request.GET.get('service_id')
@@ -33,29 +35,33 @@ def get_session_types(request):
     data = [{'id': st.id, 'name': st.get_session_type_display()} for st in session_types]
     return JsonResponse(data, safe=False)
 
+
 # Сторінка успішного запису
 def booking_success(request):
     return render(request, 'bookings/booking_success.html')
+
 
 # Сторінка "Про нас"
 def about(request):
     return render(request, 'bookings/about.html')
 
+
 # Сторінка "Новини"
 def news(request):
     return render(request, 'bookings/news.html')
 
+
 # Реєстрація користувача
 def register(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = UserForm(request.POST)
         if form.is_valid():
             user = form.save()
             auth_login(request, user)  # Автоматично увійти після реєстрації
             messages.success(request, 'Реєстрація успішна! Ласкаво просимо.')
             return redirect('about')  # Перенаправити на сторінку "Про нас"
     else:
-        form = CustomUserCreationForm()
+        form = UserForm()
     return render(request, 'bookings/register.html', {'form': form})
 
 # Вхід у систему
