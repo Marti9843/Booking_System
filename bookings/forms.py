@@ -1,15 +1,32 @@
 from django import forms
-from .models import Client, Booking, Service, SessionType
+from .models import Booking, SessionType, User
 
-class ClientForm(forms.ModelForm):
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput, label="Пароль")
+    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Підтвердити пароль")
+
     class Meta:
-        model = Client
-        fields = ['name', 'phone', 'email']
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'username', 'password']
         labels = {
-            'name': 'Імʼя',
-            'phone': 'Телефон',
-            'email': 'Email',
+        'first_name': "Ім'я",
+        'last_name': 'Прізвище',
+        'email': 'Електронна пошта',
+        'phone_number': 'Телефон',
+        'username': 'Логін',
         }
+
+        def clean(self):
+            cleaned_data = super().clean()
+            password = cleaned_data.get("password")
+            confirm_password = cleaned_data.get("confirm_password")
+
+            if password and confirm_password and password != confirm_password:
+                raise forms.ValidationError("Паролі не співпадають.")
+
+            return cleaned_data
+
 
 class BookingForm(forms.ModelForm):
     class Meta:

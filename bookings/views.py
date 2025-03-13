@@ -1,11 +1,15 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import Service, SessionType
-from .forms import ClientForm, BookingForm
+from .forms import BookingForm
+from bookings.forms import UserForm
 
+
+@login_required
 def booking_view(request):
     if request.method == 'POST':
-        client_form = ClientForm(request.POST)
+        client_form = UserForm(request.POST)
         booking_form = BookingForm(request.POST)
         if client_form.is_valid() and booking_form.is_valid():
             client = client_form.save()
@@ -14,7 +18,7 @@ def booking_view(request):
             booking.save()
             return redirect('booking_success')
     else:
-        client_form = ClientForm()
+        client_form = UserForm()
         booking_form = BookingForm()
 
     return render(request, 'bookings/booking.html', {
@@ -23,11 +27,13 @@ def booking_view(request):
         'services': Service.objects.all(),
     })
 
+
 def get_session_types(request):
     service_id = request.GET.get('service_id')
     session_types = SessionType.objects.filter(service_id=service_id)
     data = [{'id': st.id, 'name': st.get_session_type_display()} for st in session_types]
     return JsonResponse(data, safe=False)
+
 
 def booking_success(request):
     return render(request, 'bookings/booking_success.html')
