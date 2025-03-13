@@ -7,9 +7,6 @@
     <form method="POST">
         {% csrf_token %}
 
-        <h3>Ваші дані</h3>
-        {{ client_form.as_p }}
-
         <h3>Оберіть послугу</h3>
         {{ booking_form.service }}
 

@@ -1,17 +1,9 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from .models import Client, Booking, Service, SessionType
-
-class ClientForm(forms.ModelForm):
-    class Meta:
-        model = Client
-        fields = ['name', 'phone', 'email']
-        labels = {
-            'name': 'Імʼя',
-            'phone': 'Телефон',
-            'email': 'Email',
-        }
+from django.contrib.auth.forms import UserCreationForm
+from django.core.validators import RegexValidator
+from .models import Users, Booking, Service, SessionType
 
 class BookingForm(forms.ModelForm):
     class Meta:
@@ -59,3 +51,31 @@ class BookingForm(forms.ModelForm):
         if service and session_type and session_type.service != service:
             raise ValidationError("Обраний тип заняття не належить до обраної послуги.")
         return cleaned_data
+
+class CustomUserCreationForm(UserCreationForm):
+    username = forms.CharField(max_length=30, required=True, label="Логін")
+    first_name = forms.CharField(max_length=30, required=True, label="Ім'я")
+    last_name = forms.CharField(max_length=30, required=True, label="Прізвище")
+    phonenumber = forms.CharField(
+        max_length=20,
+        required=True,
+        label="Номер телефону",
+        validators=[RegexValidator(r'^\+?1?\d{9,15}$', "Номер телефону повинен бути у форматі: '+380XXXXXXXXX'.")]
+    )
+    email = forms.EmailField(required=True, label="Електронна пошта")
+
+    class Meta:
+        model = Users  # Використовуємо кастомну модель Users
+        fields = ("username", "first_name", "last_name", "phonenumber", "email", "password1", "password2")
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if Users.objects.filter(username=username).exists():
+            raise ValidationError("Користувач з таким логіном вже існує.")
+        return username
+
+    def clean_password1(self):
+        password1 = self.cleaned_data.get('password1')
+        if len(password1) < 7:
+            raise ValidationError("Пароль повинен містити щонайменше 7 символів.")
+        return password1

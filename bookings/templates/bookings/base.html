@@ -9,24 +9,27 @@
 </head>
 <body>
     <!-- Навігаційне меню -->
-    <nav>
-        <ul>
-            <li><a href="{% url 'about' %}">Про нас</a></li>
-            <li><a href="{% url 'news' %}">Новини</a></li>
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'booking' %}">Запис на послугу</a></li>
-                <li>
-                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" style="background: none; border: none; color: white; cursor: pointer; padding: 14px 16px;">Вийти</button>
-                    </form>
-                </li>
-            {% else %}
-                <li><a href="{% url 'login' %}">Увійти</a></li>
-                <li><a href="{% url 'register' %}">Реєстрація</a></li>
-            {% endif %}
-        </ul>
-    </nav>
+   <nav>
+    <ul>
+        <li><a href="{% url 'about' %}">Про нас</a></li>
+        <li><a href="{% url 'news' %}">Новини</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'booking' %}">Запис на послугу</a></li>
+            <li>
+                <span style="color: white; padding: 14px 16px;">{{ user.username }}</span>
+            </li>
+            <li>
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: white; cursor: pointer; padding: 14px 16px;">Вийти</button>
+                </form>
+            </li>
+        {% else %}
+            <li><a href="{% url 'login' %}">Увійти</a></li>
+            <li><a href="{% url 'register' %}">Реєстрація</a></li>
+        {% endif %}
+    </ul>
+</nav>
 
     <!-- Відображення повідомлень -->
     {% if messages %}

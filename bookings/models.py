@@ -1,6 +1,23 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 
+class Users(AbstractUser):
+    # Додаткові поля
+    phonenumber = models.CharField(
+        max_length=15,
+        unique=True,
+        validators=[RegexValidator(r'^\+?1?\d{9,15}$', "Номер телефону повинен бути у форматі: '+380XXXXXXXXX'.")],
+        verbose_name="Номер телефону"
+    )
+    email = models.EmailField(unique=True, verbose_name="Електронна пошта")
 
+    # Додаткові налаштування
+    USERNAME_FIELD = 'email'  # Використовуємо email для входу
+    REQUIRED_FIELDS = ['username', 'phonenumber']  # Обов'язкові поля при створенні користувача
+
+    def __str__(self):
+        return self.email
 class Service(models.Model):
     FITNESS = 'fitness'
     POOL = 'pool'
@@ -20,7 +37,6 @@ class Service(models.Model):
     def __str__(self):
         return self.get_name_display()
 
-
 class SessionType(models.Model):
     GROUP = 'group'
     INDIVIDUAL = 'individual'
@@ -36,18 +52,11 @@ class SessionType(models.Model):
     def __str__(self):
         return f"{self.service} - {self.get_session_type_display()}"
 
-
-class Client(models.Model):
-    name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField(unique=True)
-
     def __str__(self):
         return self.name
 
-
 class Booking(models.Model):
-    client = models.ForeignKey(Client, related_name='bookings', on_delete=models.CASCADE)
+    client = models.ForeignKey(Users, related_name='bookings', on_delete=models.CASCADE)
     service = models.ForeignKey(Service, related_name='bookings', on_delete=models.CASCADE)
     session_type = models.ForeignKey(SessionType, related_name='bookings', on_delete=models.CASCADE)
     date = models.DateField()
